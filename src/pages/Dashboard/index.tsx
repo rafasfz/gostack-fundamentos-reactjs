@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { parseISO, format } from 'date-fns';
 
-import { parse } from 'url';
 import income from '../../assets/income.svg';
 import outcome from '../../assets/outcome.svg';
 import total from '../../assets/total.svg';
@@ -9,6 +8,8 @@ import total from '../../assets/total.svg';
 import api from '../../services/api';
 
 import Header from '../../components/Header';
+
+import formatValue from '../../utils/formatValue';
 
 import { Container, CardContainer, Card, TableContainer } from './styles';
 
@@ -24,9 +25,9 @@ interface Transaction {
 }
 
 interface Balance {
-  income: string;
-  outcome: string;
-  total: string;
+  income: number;
+  outcome: number;
+  total: number;
 }
 
 const Dashboard: React.FC = () => {
@@ -57,24 +58,11 @@ const Dashboard: React.FC = () => {
   }
 
   function formatValueWithType(value: number, type: string): string {
-    const formattedValue = value.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    });
+    const formattedValue = formatValue(value);
 
     if (type === 'outcome') {
       return `- ${formattedValue}`;
     }
-
-    return formattedValue;
-  }
-
-  function formatValue(valueString: string): string {
-    const value = Number(valueString);
-    const formattedValue = value.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    });
 
     return formattedValue;
   }
@@ -89,7 +77,9 @@ const Dashboard: React.FC = () => {
               <p>Entradas</p>
               <img src={income} alt="Income" />
             </header>
-            <h1 data-testid="balance-income">{formatValue(balance.income)}</h1>
+            <h1 data-testid="balance-income">
+              R$ {formatValue(balance.income)}
+            </h1>
           </Card>
           <Card>
             <header>
@@ -97,7 +87,7 @@ const Dashboard: React.FC = () => {
               <img src={outcome} alt="Outcome" />
             </header>
             <h1 data-testid="balance-outcome">
-              {formatValue(balance.outcome)}
+              R$ {formatValue(balance.outcome)}
             </h1>
           </Card>
           <Card total>
@@ -105,7 +95,7 @@ const Dashboard: React.FC = () => {
               <p>Total</p>
               <img src={total} alt="Total" />
             </header>
-            <h1 data-testid="balance-total">{formatValue(balance.total)}</h1>
+            <h1 data-testid="balance-total">R$ {formatValue(balance.total)}</h1>
           </Card>
         </CardContainer>
 
